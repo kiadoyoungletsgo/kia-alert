@@ -1,0 +1,26 @@
+name: KIA 득점 알림
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+    - cron: "30 8 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: kia-alert
+  cancel-in-progress: false
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - run: python kia_score_alert.py
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
